@@ -1,6 +1,7 @@
 ############################################################
 ### Stage 1: Build
 FROM clux/muslrust:stable as builder
+LABEL org.opencontainers.image.source=https://github.com/JimmyToor/discord-soundboard-bot
 WORKDIR /app
 
 # Install CMAKE for audiopus_sys
