@@ -33,7 +33,7 @@ FROM debian:stable-slim as composer
 # Get ffmpeg
 RUN apt-get update && apt-get install -y curl tar xz-utils \
   && apt-get clean \
-  && curl -L -# --compressed -A 'https://github.com/dominikks/discord-soundboard-bot' -o linux-x64.tar.xz 'https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz' \
+  && curl -L -# --compressed -A 'https://github.com/JimmyToor/discord-soundboard-bot' -o linux-x64.tar.xz 'https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz' \
   && tar -x -C /usr/bin --strip-components 1 -f linux-x64.tar.xz --wildcards '*/ffmpeg' '*/ffprobe' \
   && tar -x -f linux-x64.tar.xz --ignore-case --wildcards -O '**/GPLv3.txt' > /usr/bin/ffmpeg.LICENSE
 
@@ -49,7 +49,6 @@ ADD --chown=discordbot:discordbot frontend/dist/discord-soundboard-bot /app/stat
 ############################################################
 ### Stage 3: Final image
 FROM gcr.io/distroless/cc
-LABEL maintainer="dominik@kus.software"
 
 COPY --from=composer /etc/passwd /etc/
 COPY --from=composer /usr/bin/ffmpeg /usr/bin/ffprobe /usr/bin/

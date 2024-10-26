@@ -1,6 +1,6 @@
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/dominikks/discord-soundboard-bot/build.yaml?branch=main)
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/dominikks/discord-soundboard-bot)
-![GitHub](https://img.shields.io/github/license/dominikks/discord-soundboard-bot)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/JimmyToor/discord-soundboard-bot/build.yaml?branch=main)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/JimmyToor/discord-soundboard-bot)
+![GitHub](https://img.shields.io/github/license/JimmyToor/discord-soundboard-bot)
 
 # discord-soundboard-bot
 
@@ -59,7 +59,7 @@ To run the app, create a docker-compose file:
 version: "3"
 services:
   soundboard:
-    image: ghcr.io/dominikks/discord-soundboard-bot
+    image: ghcr.io/JimmyToor/discord-soundboard-bot
     ports:
       - 8000:8000
     environment:
