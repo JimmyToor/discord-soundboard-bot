@@ -1,5 +1,4 @@
 # Development Sandbox
-version: "3.8"
 services:
   db:
     image: postgres
