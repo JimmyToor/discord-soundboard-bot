@@ -61,5 +61,5 @@ VOLUME /app/data/sounds
 VOLUME /app/data/recorder
 
 EXPOSE 8000
-ENV RUST_LOG=info
+ENV RUST_LOG=trace
 CMD ["/app/discord-soundboard-bot"]
