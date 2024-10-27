@@ -346,6 +346,9 @@ async fn login_post(
     code: String,
     state: String,
 ) -> Result<Redirect, AuthError> {
+    for cookie in cookies.iter() {
+        println!("Cookie: {} = {}", cookie.name(), cookie.value());
+    }
     let login_cookie = cookies
         .get_private(LOGIN_COOKIE)
         .and_then(|cookie| serde_json::from_str::<LoginInfo>(cookie.value()).ok())
@@ -366,7 +369,7 @@ async fn login_post(
 
     let access_token = token_result.access_token().secret();
     let user_info: DiscordUser = reqwest::Client::new()
-        .get("https://discord.com/api/v8/users/@me")
+        .get("https://discord.com/api/v9/users/@me")
         .header("Authorization", format!("Bearer {}", access_token))
         .send()
         .await?
@@ -409,6 +412,9 @@ async fn login_post(
 #[instrument(skip(cookies, oauth))]
 #[get("/auth/login", rank = 3)]
 fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redirect, AuthError> {
+    for cookie in cookies.iter() {
+        println!("Cookie: {} = {}", cookie.name(), cookie.value());
+    }
     let (pkce_challenge, pkce_verifier) = PkceCodeChallenge::new_random_sha256();
 
     // Generate the full authorization URL.
