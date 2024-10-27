@@ -420,10 +420,8 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
         .add_scope(Scope::new("identify".to_string()))
         .set_pkce_challenge(pkce_challenge)
         .url();
-
-    // Place the csrf token and pkce verifier as secure cookies on the client, expiring in 5 minutes
-    cookies.add_private(
-        Cookie::build(
+        
+    let login_cookie = Cookie::build(
             LOGIN_COOKIE,
             serde_json::to_string(&LoginInfo {
                 csrf_state: csrf_state.secret().clone(),
@@ -432,10 +430,15 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
             .map_err(|_| {
                 AuthError::InternalError(String::from("Failed to set temporary cookie."))
             })?,
-        )
-        .expires(OffsetDateTime::now_utc() + Duration::from_secs(5 * 60))
+        ).expires(OffsetDateTime::now_utc() + Duration::from_secs(5 * 60))
         .same_site(SameSite::None)
-        .finish(),
+        .finish();
+        
+    println!("login_cookie: {} ", login_cookie.value());
+
+    // Place the csrf token and pkce verifier as secure cookies on the client, expiring in 5 minutes
+    cookies.add_private(
+        login_cookie
     );
 
     for cookie in cookies.iter() {

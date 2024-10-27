@@ -40,7 +40,8 @@ async fn main() {
     // Disable serenity logging because it leads to audio problems
     let filter = EnvFilter::from_default_env()
         .add_directive("serenity=off".parse().unwrap())
-        .add_directive("songbird=off".parse().unwrap());
+        .add_directive("songbird=off".parse().unwrap())
+        .add_directive("debug".parse().unwrap());
     let format = fmt::format();
     let subscriber = fmt().event_format(format).with_env_filter(filter).finish();
     tracing::subscriber::set_global_default(subscriber).expect("setting tracing default failed");
