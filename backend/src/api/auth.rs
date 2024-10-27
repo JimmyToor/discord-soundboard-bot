@@ -412,9 +412,6 @@ async fn login_post(
 #[instrument(skip(cookies, oauth))]
 #[get("/auth/login", rank = 3)]
 fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redirect, AuthError> {
-    for cookie in cookies.iter() {
-        println!("Cookie: {} = {}", cookie.name(), cookie.value());
-    }
     let (pkce_challenge, pkce_verifier) = PkceCodeChallenge::new_random_sha256();
 
     // Generate the full authorization URL.
@@ -441,6 +438,10 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
         .finish(),
     );
 
+    for cookie in cookies.iter() {
+        println!("Pre-Cookie: {} = {}", cookie.name(), cookie.value());
+    }
+    
     // Send redirect
     Ok(Redirect::to(auth_url.as_str().to_string()))
 }
