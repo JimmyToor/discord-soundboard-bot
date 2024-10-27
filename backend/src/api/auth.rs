@@ -434,7 +434,7 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
             })?,
         )
         .expires(OffsetDateTime::now_utc() + Duration::from_secs(5 * 60))
-        .same_site(SameSite::Lax)
+        .same_site(SameSite::None)
         .finish(),
     );
 
