@@ -356,9 +356,6 @@ async fn login_post(
     for cookie in cookies.iter() {
         println!("Post-Cookie: {} = {}", cookie.name(), cookie.value());
     }
-    for cookie in cookies.iter_private() {
-        println!("Post-Private-Cookie: {} = {}", cookie.name(), cookie.value());
-    }
     
 
     if state != login_cookie.csrf_state {
@@ -438,7 +435,7 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
             })?,
         )
         .expires(OffsetDateTime::now_utc() + Duration::from_secs(5 * 60))
-        .same_site(SameSite::None) 
+        .same_site(SameSite::Lax) 
         .path("/")
         .secure(true)
         .finish();
@@ -453,11 +450,11 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
     for cookie in cookies.iter() {
         println!("Pre-Cookie: {} = {}", cookie.name(), cookie.value());
     }
-    for cookie in cookies.iter_private() {
-        println!("Pre-Private-Cookie: {} = {}", cookie.name(), cookie.value());
-    }
     if let Some(cookie) = cookies.get_private(LOGIN_COOKIE) {
-        println!("Private login_cookie found. value: {}", cookie.value());
+        println!("#login_pre:Private login_cookie found. value: {}", cookie.value());
+    }
+    else {
+        println!("#login_pre: Private login_cookie not found.");
     }
     
     
