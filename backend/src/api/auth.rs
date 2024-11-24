@@ -448,7 +448,7 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
     println!("#login_pro: login_cookie: {} ", login_cookie.value());
 
     // Place the csrf token and pkce verifier as secure cookies on the client, expiring in 5 minutes
-    cookies.add_private(
+    cookies.add(
         login_cookie
     );
 
