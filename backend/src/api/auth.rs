@@ -346,8 +346,15 @@ async fn login_post(
     code: String,
     state: String,
 ) -> Result<Redirect, AuthError> {
+    info!("Received state: {}", state);
+    if let Some(cookie) = cookies.get_private(LOGIN_COOKIE) {
+        info!("Found login cookie: {}", cookie.value());
+    } else {
+        info!("No login cookie found");
+    }
+    
     for cookie in cookies.iter() {
-        println!("Cookie: {} = {}", cookie.name(), cookie.value());
+        println!("Post-Cookie: {} = {}", cookie.name(), cookie.value());
     }
     let login_cookie = cookies
         .get_private(LOGIN_COOKIE)
@@ -421,7 +428,7 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
         .set_pkce_challenge(pkce_challenge)
         .url();
         
-    let login_cookie = Cookie::build(
+        let login_cookie = Cookie::build(
             LOGIN_COOKIE,
             serde_json::to_string(&LoginInfo {
                 csrf_state: csrf_state.secret().clone(),
@@ -430,8 +437,12 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
             .map_err(|_| {
                 AuthError::InternalError(String::from("Failed to set temporary cookie."))
             })?,
-        ).expires(OffsetDateTime::now_utc() + Duration::from_secs(5 * 60))
-        .same_site(SameSite::None)
+        )
+        .expires(OffsetDateTime::now_utc() + Duration::from_secs(5 * 60))
+        .same_site(SameSite::None) 
+        .path("/")
+        .secure(true)
+        .http_only(true)
         .finish();
         
     println!("login_cookie: {} ", login_cookie.value());
@@ -443,6 +454,9 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
 
     for cookie in cookies.iter() {
         println!("Pre-Cookie: {} = {}", cookie.name(), cookie.value());
+    }
+    if let Some(cookie) = cookies.get_private(LOGIN_COOKIE) {
+        println!("Private cookie value: {}", cookie.value());
     }
     
     // Send redirect
