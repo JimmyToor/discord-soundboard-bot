@@ -347,7 +347,7 @@ async fn login_post(
     state: String,
 ) -> Result<Redirect, AuthError> {
     info!("Received state: {}", state);
-    if let Some(cookie) = cookies.get_private(LOGIN_COOKIE) {
+    if let Some(cookie) = cookies.get(LOGIN_COOKIE) {
         info!("Found login cookie: {}", cookie.value());
     } else {
         info!("No login cookie found");
@@ -358,7 +358,7 @@ async fn login_post(
     }
     
     let login_cookie = cookies
-        .get_private(LOGIN_COOKIE)
+        .get(LOGIN_COOKIE)
         .and_then(|cookie| serde_json::from_str::<LoginInfo>(cookie.value()).ok())
         .ok_or_else(|| AuthError::MissingLoginCookie(String::from("Unknown login session")))?;
     cookies.remove_private(Cookie::named(LOGIN_COOKIE));
@@ -455,7 +455,7 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
     for cookie in cookies.iter() {
         println!("Pre-Cookie: {} = {}", cookie.name(), cookie.value());
     }
-    if let Some(cookie) = cookies.get_private(LOGIN_COOKIE) {
+    if let Some(cookie) = cookies.get(LOGIN_COOKIE) {
         println!("#login_pre:Private login_cookie found. value: {}", cookie.value());
     }
     else {
@@ -469,7 +469,7 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
 
 #[post("/auth/logout")]
 fn logout(cookies: &CookieJar<'_>) -> String {
-    cookies.remove_private(Cookie::named(SESSION_COOKIE));
+    cookies.remove(Cookie::named(SESSION_COOKIE));
     String::from("User logged out")
 }
 
