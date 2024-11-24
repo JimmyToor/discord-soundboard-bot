@@ -357,6 +357,11 @@ async fn login_post(
         println!("Post-Cookie: {} = {}", cookie.name(), cookie.value());
     }
     
+    if let Some(test_cookie) = cookies.get("test_cookie") {
+        println!("Test cookie found: {}", test_cookie.value());
+    } else {
+        println!("Test cookie not found");
+    }
     let login_cookie = cookies
         .get(LOGIN_COOKIE)
         .and_then(|cookie| serde_json::from_str::<LoginInfo>(cookie.value()).ok())
@@ -451,6 +456,15 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
     cookies.add(
         login_cookie
     );
+
+    if let Some(test_cookie) = cookies.get("test_cookie") {
+        println!("Test cookie found: {}", test_cookie.value());
+    } else {
+        println!("Test cookie not found");
+    }
+
+    cookies.add(Cookie::new("test_cookie", "test_value"));
+
 
     for cookie in cookies.iter() {
         println!("Pre-Cookie: {} = {}", cookie.name(), cookie.value());
