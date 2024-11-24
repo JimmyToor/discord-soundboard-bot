@@ -62,7 +62,7 @@ pub fn get_oauth_client() -> BasicClient {
     BasicClient::new(
         ClientId::new(DISCORD_CLIENT_ID.clone()),
         Some(ClientSecret::new(DISCORD_CLIENT_SECRET.clone())),
-        AuthUrl::new("https://discord.com/api/oauth2/authorize".to_string())
+        AuthUrl::new("https://discord.com/oauth2/authorize".to_string())
             .expect("Parse discord auth url"),
         Some(
             TokenUrl::new("https://discord.com/api/oauth2/token".to_string())
@@ -472,9 +472,9 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
         println!("Pre-Cookie: {} = {}", cookie.name(), cookie.value());
     }
 
-    if (let Some(test_cookie) = cookies.get("test_cookie!")  {
+    if let Some(test_cookie) = cookies.get("test_cookie!")  {
         println!("Test cookie found: {}", test_cookie.value());
-    } else if (let Some(test_cookie) = cookies.get_pending("test_cookie!")) {
+    } else if let Some(test_cookie) = cookies.get_pending("test_cookie!") {
         println!("Pending Test cookie found: {}", test_cookie.value());
     } else {
         println!("Test cookie not found");
@@ -482,7 +482,7 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
 
     if let Some(cookie) = cookies.get(LOGIN_COOKIE) {
         println!("#login_pre: login_cookie found. value: {}", cookie.value());
-    } else if (let Some(cookie) = cookies.get_pending(LOGIN_COOKIE)){
+    } else if let Some(cookie) = cookies.get_pending(LOGIN_COOKIE){
         println!("#login_pre:Pending login_cookie found. value: {}", cookie.value());
     }
     else {
