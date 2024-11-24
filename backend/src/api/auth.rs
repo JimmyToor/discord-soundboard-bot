@@ -367,7 +367,7 @@ async fn login_post(
         return Err(AuthError::CsrfMissmatch(String::from(
             "Possible Cross Site Request Forgery attack detected",
         )));
-    }st
+    }
 
     let token_result = oauth
         .exchange_code(AuthorizationCode::new(code))
