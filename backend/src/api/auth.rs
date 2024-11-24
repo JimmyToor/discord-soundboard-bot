@@ -445,7 +445,6 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
         .same_site(SameSite::None) 
         .path("/")
         .secure(true)
-        .http_only(true)
         .finish();
         
     println!("#login_pro: login_cookie: {} ", login_cookie.value());
