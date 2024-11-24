@@ -346,7 +346,13 @@ async fn login_post(
     code: String,
     state: String,
 ) -> Result<Redirect, AuthError> {
-    info!("Received state: {}", state);
+    
+    if let Some(test_cookie) = cookies.get("test_cookie!") {
+        println!("#login_post:Test cookie found: {}", test_cookie.value());
+    } else {
+        println!("#login_post:Test cookie not found");
+    }
+
     if let Some(cookie) = cookies.get(LOGIN_COOKIE) {
         info!("Found login cookie: {}", cookie.value());
     } else {
@@ -356,12 +362,7 @@ async fn login_post(
     for cookie in cookies.iter() {
         println!("Post-Cookie: {} = {}", cookie.name(), cookie.value());
     }
-    
-    if let Some(test_cookie) = cookies.get("test_cookie") {
-        println!("Test cookie found: {}", test_cookie.value());
-    } else {
-        println!("Test cookie not found");
-    }
+
     let login_cookie = cookies
         .get(LOGIN_COOKIE)
         .and_then(|cookie| serde_json::from_str::<LoginInfo>(cookie.value()).ok())
@@ -457,23 +458,35 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
         login_cookie
     );
 
-    if let Some(test_cookie) = cookies.get("test_cookie") {
-        println!("Test cookie found: {}", test_cookie.value());
-    } else {
-        println!("Test cookie not found");
-    }
-
-    cookies.add(Cookie::new("test_cookie", "test_value"));
+    cookies.add(
+        Cookie::build("test_cookie!", "test_value!")
+            .path("/")
+            .secure(true)
+            .same_site(SameSite::Lax)
+            .expires(OffsetDateTime::now_utc() + Duration::from_secs(5 * 60))
+            .finish()
+    );
 
 
     for cookie in cookies.iter() {
         println!("Pre-Cookie: {} = {}", cookie.name(), cookie.value());
     }
+
+    if (let Some(test_cookie) = cookies.get("test_cookie!")  {
+        println!("Test cookie found: {}", test_cookie.value());
+    } else if (let Some(test_cookie) = cookies.get_pending("test_cookie!")) {
+        println!("Pending Test cookie found: {}", test_cookie.value());
+    } else {
+        println!("Test cookie not found");
+    }
+
     if let Some(cookie) = cookies.get(LOGIN_COOKIE) {
-        println!("#login_pre:Private login_cookie found. value: {}", cookie.value());
+        println!("#login_pre: login_cookie found. value: {}", cookie.value());
+    } else if (let Some(cookie) = cookies.get_pending(LOGIN_COOKIE)){
+        println!("#login_pre:Pending login_cookie found. value: {}", cookie.value());
     }
     else {
-        println!("#login_pre: Private login_cookie not found.");
+        println!("#login_pre: login_cookie not found.");
     }
     
     
