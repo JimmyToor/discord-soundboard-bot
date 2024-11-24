@@ -356,6 +356,9 @@ async fn login_post(
     for cookie in cookies.iter() {
         println!("Post-Cookie: {} = {}", cookie.name(), cookie.value());
     }
+    for cookie in cookies.iter_private() {
+        println!("Post-Private-Cookie: {} = {}", cookie.name(), cookie.value());
+    }
     let login_cookie = cookies
         .get_private(LOGIN_COOKIE)
         .and_then(|cookie| serde_json::from_str::<LoginInfo>(cookie.value()).ok())
@@ -445,7 +448,7 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
         .http_only(true)
         .finish();
         
-    println!("login_cookie: {} ", login_cookie.value());
+    println!("#login_pro: login_cookie: {} ", login_cookie.value());
 
     // Place the csrf token and pkce verifier as secure cookies on the client, expiring in 5 minutes
     cookies.add_private(
@@ -455,9 +458,13 @@ fn login_pre(cookies: &CookieJar<'_>, oauth: &State<BasicClient>) -> Result<Redi
     for cookie in cookies.iter() {
         println!("Pre-Cookie: {} = {}", cookie.name(), cookie.value());
     }
-    if let Some(cookie) = cookies.get_private(LOGIN_COOKIE) {
-        println!("Private cookie value: {}", cookie.value());
+    for cookie in cookies.iter_private() {
+        println!("Pre-Private-Cookie: {} = {}", cookie.name(), cookie.value());
     }
+    if let Some(cookie) = cookies.get_private(LOGIN_COOKIE) {
+        println!("Private login_cookie found. value: {}", cookie.value());
+    }
+    
     
     // Send redirect
     Ok(Redirect::to(auth_url.as_str().to_string()))
