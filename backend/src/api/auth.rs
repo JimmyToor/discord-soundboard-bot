@@ -359,11 +359,7 @@ async fn login_post(
     for cookie in cookies.iter_private() {
         println!("Post-Private-Cookie: {} = {}", cookie.name(), cookie.value());
     }
-    let login_cookie = cookies
-        .get_private(LOGIN_COOKIE)
-        .and_then(|cookie| serde_json::from_str::<LoginInfo>(cookie.value()).ok())
-        .ok_or_else(|| AuthError::MissingLoginCookie(String::from("Unknown login session")))?;
-    cookies.remove_private(Cookie::named(LOGIN_COOKIE));
+    
 
     if state != login_cookie.csrf_state {
         return Err(AuthError::CsrfMissmatch(String::from(
